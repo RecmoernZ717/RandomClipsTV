@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA Video Vault</title>
+    <script src="https://tailwindcss.com"></script>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-black text-zinc-100 min-h-screen font-sans">
+
+    <header class="max-w-6xl mx-auto pt-12 pb-6 px-4 border-b border-zinc-800">
+        <h1 class="text-4xl font-black tracking-wider text-orange-500 uppercase">GTA Clips Archive</h1>
+        <p class="text-zinc-400 text-sm mt-1">Directly streaming raw high-definition gameplay clips.</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8" id="video-grid">
+        <!-- Videos injection point -->
+    </main>
+
+    <script src="https://jsdelivr.net"></script>
+    <script>
+        // Replace with your actual GitHub username and repository name
+        const GITHUB_USER = 'YOUR_GITHUB_USERNAME';
+        const REPO_NAME = 'YOUR_REPO_NAME';
+
+        async function loadVideos() {
+            const grid = document.getElementById('video-grid');
+            try {
+                // Safely fetches the list of video assets from your GitHub Releases
+                const response = await fetch(`https://github.com{GITHUB_USER}/${REPO_NAME}/releases`);
+                const releases = await response.json();
+                
+                let hasVideos = false;
+
+                releases.forEach(release => {
+                    release.assets.forEach(asset => {
+                        // Filters to ensure only valid video formats are rendered
+                        if (asset.name.match(/\.(mp4|webm|mov|m4v)$/i)) {
+                            hasVideos = true;
+                            const card = document.createElement('div');
+                            card.className = "bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-2xl flex flex-col justify-between";
+                            
+                            card.innerHTML = `
+                                <div class="player-container bg-black aspect-video">
+                                    <video class="js-player" controls crossorigin playsinline>
+                                        <source src="${asset.browser_download_url}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div class="p-4 border-t border-zinc-800 bg-zinc-900/50">
+                                    <h3 class="font-bold text-zinc-200 text-sm truncate">${release.name} - ${asset.name}</h3>
+                                    <p class="text-xs text-zinc-500 mt-1">Size: ${(asset.size / (1024*1024)).toFixed(1)} MB</p>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        }
+                    });
+                });
+
+                // Dynamically initialises customized beautiful player skins
+                const players = Array.from(document.querySelectorAll('.js-player')).map(p => new Plyr(p, {
+                    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+                }));
+
+                if (!hasVideos) {
+                    grid.innerHTML = '<p class="text-zinc-500 text-center col-span-full py-12">No video clips found yet. Create a release and upload a video asset!</p>';
+                }
+            } catch (error) {
+                grid.innerHTML = '<p class="text-rose-400 text-center col-span-full py-12">Error loading the video registry configuration file.</p>';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', loadVideos);
+    </script>
+</body>
+</html>
