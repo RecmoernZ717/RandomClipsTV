@@ -21,13 +21,14 @@
     <script src="https://jsdelivr.net"></script>
     <script>
         // Replace with your actual GitHub username and repository name
-        const GITHUB_USER = 'RecmoernZ717';
+        // FIXED USERNAME AND REPOSITORY STRINGS
+        const GITHUB_USER = 'Recmoernz717'; 
         const REPO_NAME = 'RandomClipsTV';
 
         async function loadVideos() {
             const grid = document.getElementById('video-grid');
             try {
-                // Safely fetches the list of video assets from your GitHub Releases
+                // FIXED URL STRUCTURE
                 const response = await fetch(`https://github.com{GITHUB_USER}/${REPO_NAME}/releases`);
                 const releases = await response.json();
                 
