@@ -29,7 +29,7 @@
             const grid = document.getElementById('video-grid');
             try {
                 // FIXED URL STRUCTURE
-                const response = await fetch(`https://github.com{GITHUB_USER}/${REPO_NAME}/releases`);
+                const response = await fetch(`https://github.com/{GITHUB_USER}/${REPO_NAME}/releases`);
                 const releases = await response.json();
                 
                 let hasVideos = false;
